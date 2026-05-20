@@ -1,0 +1,34 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Build Debug APK with System Gradle
+      working-directory: ./android
+      # OPTIMIZED: Using system 'gradle' instead of local './gradlew' 
+      # to prevent the "file not found" crash.
+      run: gradle assembleDebug
+
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: Portfolio-Tracker-APK
+        path: android/app/build/outputs/apk/debug/app-debug.apk
