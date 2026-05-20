@@ -218,7 +218,7 @@ fun PortfolioDashboard(
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.KeepWith,
+                    horizontalArrangement = Arrangement.SpaceBetween, // <--- FIXED HERE
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
