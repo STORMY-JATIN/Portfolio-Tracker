@@ -21,14 +21,16 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Build Debug APK with System Gradle
-      working-directory: ./android
-      # OPTIMIZED: Using system 'gradle' instead of local './gradlew' 
-      # to prevent the "file not found" crash.
-      run: gradle assembleDebug
+    - name: Grant Execute Permission to Gradle Wrapper
+      run: chmod +x android/gradlew
+      continue-on-error: true # Safe fallback if wrapper is generated upon first build
 
-    - name: Upload Debug APK
+    - name: Build Debug APK with Gradle
+      working-directory: ./android
+      run: ./gradlew assembleDebug
+
+    - name: Upload Signed Debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: Portfolio-Tracker-APK
+        name: slate-portfolio-debug-apk
         path: android/app/build/outputs/apk/debug/app-debug.apk
