@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Find absolute path of this script
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Set Gradle distribution properties path
+WRAPPER_JAR="$DIR/gradle/wrapper/gradle-wrapper.jar"
+WRAPPER_PROPERTIES="$DIR/gradle/wrapper/gradle-wrapper.properties"
+
+# If gradle-wrapper.jar doesn't exist, we fallback to running system gradle if installed or download the bootstrap jar
+if [ ! -f "$WRAPPER_JAR" ]; then
+    if command -v gradle >/dev/null 2>&1; then
+        exec gradle "$@"
+    else
+        echo "No system 'gradle' command or gradle-wrapper.jar found."
+        echo "Attempting to bootstrap gradle-wrapper.jar..."
+        mkdir -p "$DIR/gradle/wrapper"
+        curl -Ls https://github.com/gradle/gradle/raw/v8.5.0/gradle/wrapper/gradle-wrapper.jar -o "$WRAPPER_JAR"
+    fi
+fi
+
+# Locate java
+if [ -n "$JAVA_HOME" ] ; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+if [ ! -f "$WRAPPER_JAR" ]; then
+    echo "Error: Could not locate or download gradle-wrapper.jar"
+    exit 1
+fi
+
+exec "$JAVACMD" -classpath "$WRAPPER_JAR" org.gradle.wrapper.GradleWrapperMain "$@"
